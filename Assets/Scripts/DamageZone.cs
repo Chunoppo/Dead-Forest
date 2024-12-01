@@ -19,13 +19,13 @@ public class DamageZone : MonoBehaviour
     // Update is called once per frame
     void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Enemy") && !colliderTargets.Contains(other))
+        if(other.gameObject.CompareTag(targetTag) && !colliderTargets.Contains(other))
         {
             colliderTargets.Add(other);
-            var Enemy = other.GetComponent<Enemy>();
-            if(Enemy != null)
+            var go = other.GetComponent<Health>();
+            if(go != null)
             {
-                Enemy.TakeDamage(damageAmount);
+                go.TakeDamage(damageAmount);
             }
         }
     }

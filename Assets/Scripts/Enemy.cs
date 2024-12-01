@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class Enemy : MonoBehaviour
     public Vector3 originalePosition;
     public float maxDistance = 50f;
     public Animator animator;
-    public float maxHP;
-    public float currentHP;
+    public DamageZone damageZone;
+    public Health health;
     public enum CharacterState
     {
         Normal,
@@ -25,10 +26,21 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         originalePosition = transform.position;
-        currentHP = maxHP;
     }
     void Update()
     {
+        if(health.currentHP <= 0)
+        {
+            ChangeState(CharacterState.Die);
+        }
+        //xoay huong vao player
+        if(target != null)
+        {
+            var lookPor = target.position - transform.position;
+            lookPor.y = 0;
+            var rotation = Quaternion.LookRotation(lookPor);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime + 5);
+        }
         if (currentState == CharacterState.Die)
         {
             return;
@@ -72,9 +84,11 @@ public class Enemy : MonoBehaviour
         switch (newState)
         {
             case CharacterState.Normal:
+                damageZone.EndAttack();
                 break;
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
+                damageZone.BeginAttack();
                 break;
             case CharacterState.Die:
                 animator.SetTrigger("Die");
@@ -82,14 +96,5 @@ public class Enemy : MonoBehaviour
                 break;
         }
         currentState = newState;
-    }
-    public void TakeDamage(float damage)
-    {
-        currentHP -= damage;
-        currentHP = Math.Max(0 , currentHP);
-        if (currentHP <= 0)
-        {
-            ChangeState(CharacterState.Die);
-        }
     }
 }

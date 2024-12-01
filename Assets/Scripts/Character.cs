@@ -10,16 +10,26 @@ public class Character : MonoBehaviour
     public PlayerInput playerInput; 
 
     public Animator animator;
-    // Update is called once per frame
     public DamageZone damageZone;
+
+    public Health health;
+
+    public GameObject sword;
+    public GameObject shield;
     public enum CharacterState
     {
         Normal,
-        Attack
+        Attack,
+        Die
     }
     public CharacterState currentState;
     void FixedUpdate()
     {
+        if (health.currentHP <= 0)
+        {
+            ChangeState(CharacterState.Die);
+            return;
+        }
          switch (currentState)
         {
             case CharacterState.Normal:
@@ -67,6 +77,9 @@ public class Character : MonoBehaviour
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
                 break;
+            case CharacterState.Die:
+                animator.SetTrigger("Die");
+                break;
         }
         currentState = newState;
     }
@@ -83,4 +96,5 @@ public class Character : MonoBehaviour
     {
         damageZone.EndAttack();
     }
+
 }
