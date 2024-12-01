@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,10 +12,9 @@ public class Enemy : MonoBehaviour
     public float radius = 10f;
     public Vector3 originalePosition;
     public float maxDistance = 50f;
-
     public Animator animator;
-    // Update is called once per frame
-
+    public float maxHP;
+    public float currentHP;
     public enum CharacterState
     {
         Normal,
@@ -25,9 +25,14 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         originalePosition = transform.position;
+        currentHP = maxHP;
     }
     void Update()
     {
+        if (currentState == CharacterState.Die)
+        {
+            return;
+        }
         var distanceToOriginal = Vector3.Distance(originalePosition, transform.position);
         var distance = Vector3.Distance(target.position, transform.position);
         if (distance <= radius && distanceToOriginal <= maxDistance)
@@ -71,8 +76,20 @@ public class Enemy : MonoBehaviour
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
                 break;
+            case CharacterState.Die:
+                animator.SetTrigger("Die");
+                Destroy(gameObject, 3f);
+                break;
         }
         currentState = newState;
     }
-
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        currentHP = Math.Max(0 , currentHP);
+        if (currentHP <= 0)
+        {
+            ChangeState(CharacterState.Die);
+        }
+    }
 }
