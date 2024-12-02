@@ -88,6 +88,10 @@ public class Character : MonoBehaviour
     {
         ChangeState(CharacterState.Normal);
     }
+    public void OnAttack02End()
+    {
+        ChangeState(CharacterState.Normal);
+    }
     public void BeginAttack()
     {
         damageZone.BeginAttack();
