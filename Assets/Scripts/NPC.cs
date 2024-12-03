@@ -18,6 +18,7 @@ public class NPC : MonoBehaviour
         NPCPanel.SetActive(false);
         NPCTextContent.text = "";
     }
+
     IEnumerator ReadContent()
     {
 
